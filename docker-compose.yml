@@ -1,0 +1,35 @@
+version: "3.8"
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  api:
+    build: ./app
+    container_name: video-api
+    ports:
+      - "8000:8000"
+    environment:
+      - RABBIT_URL=amqp://guest:guest@rabbitmq:5672/
+    depends_on:
+      - rabbitmq
+
+  worker:
+    build: ./worker
+    container_name: worker
+    environment:
+      - RABBIT_URL=amqp://guest:guest@rabbitmq:5672/
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - S3_INPUT_BUCKET=${S3_INPUT_BUCKET}
+      - S3_OUTPUT_BUCKET=${S3_OUTPUT_BUCKET}
+      - WATERMARK_TEXT=${WATERMARK_TEXT}
+    depends_on:
+      - rabbitmq
