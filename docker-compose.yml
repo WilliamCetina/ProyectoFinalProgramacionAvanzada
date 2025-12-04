@@ -17,12 +17,16 @@ services:
       - "8000:8000"
     environment:
       - RABBIT_URL=amqp://guest:guest@rabbitmq:5672/
+      - AWS_REGION=${AWS_REGION}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - S3_OUTPUT_BUCKET=${S3_OUTPUT_BUCKET}
     depends_on:
       - rabbitmq
 
   worker:
     build: ./worker
-    container_name: worker
+    container_name: video-worker
     environment:
       - RABBIT_URL=amqp://guest:guest@rabbitmq:5672/
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
