@@ -1,4 +1,4 @@
 boto3
 pika
-opencv-python
 numpy
+opencv-python-headless
